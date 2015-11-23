@@ -20,7 +20,7 @@ namespace OG.MessageProcessing.App
                 MessagesCount = 3000,
                 Options = new AsyncMessageProcessorOptions
                 {
-                    LoopStrategy = MessageLoopStrategy.ThreadPoolStrategy,
+                    LoopStrategy = MessageLoopStrategy.SequentialStrategy,
                 }
             }.Run();
         }
@@ -90,7 +90,12 @@ namespace OG.MessageProcessing.App
                     if (IntervalMs > 0)
                         Thread.Sleep(IntervalMs);
                 }
-                processor.WaitFor(p => p.IsQueueEmpty, 60000, true).Wait();
+
+                processor.WaitFor(_ =>
+                        Directory.GetFiles(settings.RootDirectory, "*.log", SearchOption.AllDirectories).Length == MessagesCount, 
+                                           msPollInterval: 100, msTimeout:60000, noLogs:true)
+                                 .Wait();
+
             }, count);
         }
 

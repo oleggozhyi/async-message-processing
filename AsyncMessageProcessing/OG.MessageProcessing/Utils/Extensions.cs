@@ -17,7 +17,7 @@ namespace OG.MessageProcessing.Utils
             }
         }
         
-        public static async Task WaitFor<T>(this T obj, Func<T, bool> exitWaitCondition, int msTimeout = 500, bool noLogs = false)
+        public static async Task WaitFor<T>(this T obj, Func<T, bool> exitWaitCondition, int msTimeout = 500, int msPollInterval=5, bool noLogs = false)
         {
             var cts = new CancellationTokenSource();
             cts.CancelAfter(msTimeout);
@@ -26,8 +26,8 @@ namespace OG.MessageProcessing.Utils
                 for(bool canExit = false; !canExit; canExit = exitWaitCondition(obj))
                 {
                     if(!noLogs)
-                        Console.WriteLine("Waiting another 5ms");
-                    await Task.Delay(5, cts.Token);
+                        Console.WriteLine($"Waiting another {msPollInterval}ms");
+                    await Task.Delay(msPollInterval, cts.Token);
                 }
             }, cts.Token);
         }

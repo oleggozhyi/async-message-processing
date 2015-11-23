@@ -15,9 +15,6 @@ namespace OG.MessageProcessing.Utils
     {
         public void EnsurePathAndSave(string dir, string fileName, string content)
         {
-#if DEBUG
-            Console.WriteLine($"saving {dir}\\{fileName}");
-#endif
             if (!Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
             File.WriteAllText(Path.Combine(dir, fileName), content);
